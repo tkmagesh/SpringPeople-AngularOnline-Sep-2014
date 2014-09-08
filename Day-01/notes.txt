@@ -1,0 +1,54 @@
+1. advanced concepts on functions
+2. constructor functions
+3. closures
+4. "this" context in javascript
+5. modularize code in javascript
+
+1. Secrets of the javascript ninja - By John Resig
+2. Speaking JavaScript - Dr.Alex
+3. JavaScript Design Patterns
+
+MVC Frameworks
+Backbone
+Spine
+Dojo
+Ext.js
+Can.js
+Batman.js
+Knockout.js
+Angular.js
+
+JavaScript MVC framework comparison - http://www.smashingmagazine.com/2012/07/27/journey-through-the-javascript-mvc-jungle/
+
+Backbone.js
+===========
+Model (evented models)
+View
+Collection
+Router
+
+jQuery
+underscore.js
+require.js
+Handlebars.js
+
+Model - View Synchronization
+
+
+Angular
+=======
+Controllers
+Directives
+Filters
+
+Factory
+Service
+Provider
+Value
+Constant
+
+Module
+Router
+
+View - Model Synchronization - data binding
+

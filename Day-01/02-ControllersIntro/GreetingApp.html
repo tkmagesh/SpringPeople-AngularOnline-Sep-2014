@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Greeting Application</title>
+	<script src="../bower_components/angular/angular.js"></script>
+	<style>
+	label {
+		display: block;
+	}
+	</style>
+	<script>
+	function greetController($scope){
+		var myModel = {
+			firstName : 'Magesh',
+			lastName : 'Kuppan',
+			greetMsg : '[default greet msg]',
+			generateMessage : function(){
+				this.greetMsg = 'Hi ' + this.firstName + " " + this.lastName;
+				if (new Date().getHours() < 12){
+					this.greetMsg += " Good Morning!!";
+				} else {
+					this.greetMsg += " Good Evening!!";
+				}
+			}
+		};
+		$scope.greetModel = myModel;
+	}
+	</script>
+</head>
+<body data-ng-app >
+	<h1>Greeing App</h1>
+	<hr>
+	<div data-ng-controller="greetController">
+	<div><label for="txtFirstName">First Name :</label><input type="text" data-ng-model="greetModel.firstName"></div>
+	<div><label for="txtLastName">Last Name :</label><input type="text" data-ng-model="greetModel.lastName"></div>
+	<div><input type="button" value="Greet" data-ng-click="greetModel.generateMessage()" data-ng-disabled="greetModel.firstName === '' || greetModel.lastName === ''"></div>
+	<div>
+		<div>{{greetModel.greetMsg}}</div>
+	</div>
+	</div>
+</body>
+</html>
