@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Task Manager</title>
+	<script src="bower_components/angular/angular.js"></script>
+	<style>
+		.completed {
+			color : red;
+			text-decoration: line-through;
+			font-style: italic;
+			font-weight: bold;
+		}
+		.inProgress{
+			color : green;
+		}
+	</style>
+	<script type="text/javascript">
+	function taskController($scope){
+		var tasks = $scope.tasks = {};
+
+		$scope.addTaskCategory = function(newTaskCategory){
+			tasks[newTaskCategory] = tasks[newTaskCategory] || [];
+		};
+
+		$scope.addTask = function(taskName,taskCategory){
+			var newTask = {
+				name : taskName,
+				isCompleted : false
+			};
+			tasks[taskCategory].push(newTask);
+			$scope.message = "A new task is added..!!";
+		};
+		$scope.toggleCompletion = function(task){
+			task.isCompleted = !task.isCompleted;
+		};
+		$scope.removeCompleted = function(){
+			for(var i=tasks.length-1;i>=0;i--){
+				if (tasks[i].isCompleted)
+					tasks.splice(i,1);
+			}
+			$scope.message = "Zero or more completed tasks are removed..!!";
+		};
+		$scope.getCompletedCount = function(){
+			/*return tasks.reduce(function(seed,task){
+				return task.isCompleted ? seed + 1 : seed;
+			},0);*/
+			return 0;
+		}
+	}
+	</script>
+</head>
+<body data-ng-app>
+	<!--
+		1. Add a task
+		2. Mark/Unmark a task as completed
+		3. Remove completed tasks
+	 -->
+	<h1>Task Manager</h1>
+	<hr>
+	<div data-ng-controller="taskController">
+		<div><span>Total Task # :</span><span>{{tasks.length}}</span></div>
+		<div><span>Completed Task # :</span><span>{{getCompletedCount()}}</span></div>
+		<div>
+			<span>Task Category :</span>
+			<input type="text" data-ng-model="newTaskCategory">
+			<input type="button" value="Add Category" data-ng-click="addTaskCategory(newTaskCategory)">
+		</div>
+		<label for="txtTaskName">Task :</label>
+		<input type="text" name="" id="txtTaskName" data-ng-model="newTaskName">
+		<select data-ng-model="taskCategory">
+			<option data-ng-repeat="(category, taskList) in tasks">{{category}}</option>
+		</select>
+		<input type="button" value="Add Task" data-ng-click="addTask(newTaskName, taskCategory)">
+		<input type="button" value="Remove Completed" data-ng-click="removeCompleted()" data-ng-disabled="getCompletedCount() === 0">
+		<div>
+			<div data-ng-repeat="(category, taskList) in tasks" data-ng-hide="taskList.length === 0">
+				<h3>{{category}}</h3>
+				<ul>
+					<li 
+						data-ng-repeat="task in taskList" 
+						data-ng-click="toggleCompletion(task)"
+						data-ng-class="{completed : task.isCompleted, inProgress : !task.isCompleted}"
+						>{{task.name}} </li>
+				</ul>		
+			</div>
+
+		</div>
+		
+		<div>{{message}}</div>
+	</div>
+</body>
+</html>
