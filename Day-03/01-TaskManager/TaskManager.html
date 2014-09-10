@@ -16,42 +16,70 @@
 		}
 	</style>
 	<script type="text/javascript">
-	function taskController($scope){
-		var tasks = $scope.tasks = {};
-
-		$scope.addTaskCategory = function(newTaskCategory){
-			tasks[newTaskCategory] = tasks[newTaskCategory] || [];
-		};
-
-		$scope.addTask = function(taskName,taskCategory){
+	function getTaskStorage(){
+		function getAllTasksFromStorage(){
+			var result = [];
+			for(var i=0;i<window.localStorage.length;i++){
+				var key = window.localStorage.key(i);
+				var task = window.JSON.parse(window.localStorage.getItem(key));
+				result.push(task);
+			}
+			return result;
+		}
+		function addTaskToStorage(taskName){
+			var id = new Date().getTime().toString();
 			var newTask = {
+				id : id,
 				name : taskName,
 				isCompleted : false
 			};
-			tasks[taskCategory].push(newTask);
+			window.localStorage.setItem(id, window.JSON.stringify(newTask));
+			return newTask;
+		}
+		function removeTaskFromStorage(task){
+			window.localStorage.removeItem(task.id);
+		}
+		function updateTaskInStorage(task){
+			window.localStorage.setItem(task.id, window.JSON.stringify(task));
+		}
+		return {
+			add : addTaskToStorage,
+			remove : removeTaskFromStorage,
+			update : updateTaskInStorage,
+			getAll : getAllTasksFromStorage
+		}
+	}
+	
+	function taskController($scope){
+		var taskStorage = getTaskStorage();
+		var tasks = $scope.tasks = taskStorage.getAll();
+		
+
+		$scope.addTask = function(taskName){
+			var newTask = taskStorage.add(taskName);
+			tasks.push(newTask);
 			$scope.message = "A new task is added..!!";
 		};
+
 		$scope.toggleCompletion = function(task){
 			task.isCompleted = !task.isCompleted;
+			taskStorage.update(task);
 		};
+
 		$scope.removeCompleted = function(){
-			for(var category in tasks){
-				var taskCollection = tasks[category];
-				for(var i=taskCollection.length-1;i>=0;i--)
-					if (taskCollection[i].isCompleted)
-						taskCollection.splice(i,1);
-			}
+				for(var i=tasks.length-1;i>=0;i--)
+					if (tasks[i].isCompleted){
+						taskStorage.remove(tasks[i]);
+						tasks.splice(i,1);
+					}
+			
 			$scope.message = "Zero or more completed tasks are removed..!!";
 		};
 		$scope.getCompletedCount = function(){
-			var completedTaskCount = 0;
-			for(var category in tasks){
-				var taskCollection = tasks[category];
-				completedTaskCount += taskCollection.reduce(function(seed,task){
+			return tasks.reduce(function(seed,task){
 					return task.isCompleted ? seed + 1 : seed;
 				},0);	
-			}
-			return completedTaskCount;
+			
 		}
 	}
 	</script>
@@ -67,32 +95,17 @@
 	<div data-ng-controller="taskController">
 		<div><span>Total Task # :</span><span>{{tasks.length}}</span></div>
 		<div><span>Completed Task # :</span><span>{{getCompletedCount()}}</span></div>
-		<div>
-			<span>Task Category :</span>
-			<input type="text" data-ng-model="newTaskCategory">
-			<input type="button" value="Add Category" data-ng-click="addTaskCategory(newTaskCategory)">
-		</div>
 		<label for="txtTaskName">Task :</label>
 		<input type="text" name="" id="txtTaskName" data-ng-model="newTaskName">
-		<select data-ng-model="taskCategory">
-			<option data-ng-repeat="(category, taskList) in tasks">{{category}}</option>
-		</select>
-		<input type="button" value="Add Task" data-ng-click="addTask(newTaskName, taskCategory)">
+		<input type="button" value="Add Task" data-ng-click="addTask(newTaskName)">
 		<input type="button" value="Remove Completed" data-ng-click="removeCompleted()" data-ng-disabled="getCompletedCount() === 0">
-		<div>
-			<div data-ng-repeat="(category, taskList) in tasks" data-ng-hide="taskList.length === 0">
-				<h3>{{category}}</h3>
 				<ul>
 					<li 
-						data-ng-repeat="task in taskList" 
+						data-ng-repeat="task in tasks track by task.id" 
 						data-ng-click="toggleCompletion(task)"
 						data-ng-class="{completed : task.isCompleted, inProgress : !task.isCompleted}"
 						>{{task.name}} </li>
 				</ul>		
-			</div>
-
-		</div>
-		
 		<div>{{message}}</div>
 	</div>
 </body>
