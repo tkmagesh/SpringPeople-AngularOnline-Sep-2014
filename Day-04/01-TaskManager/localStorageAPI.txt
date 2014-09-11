@@ -1,0 +1,10 @@
+window.localStorage
+	collection key/value pairs
+	both key and value should be of type string
+
+	void setItem(key,value)
+	value getItem(key)
+	void removeItem(key)
+	number length
+	key key(number)
+	clear()

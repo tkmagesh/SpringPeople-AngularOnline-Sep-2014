@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Task Manager</title>
+	<link rel="stylesheet" href="styles/style.css">
+	<script src="bower_components/angular/angular.js"></script>
+	<script src="modules/taskApp.js"></script>
+	<script src="controllers/taskController.js"></script>
+	<script src="factories/Task.js"></script>
+	<script src="services/taskStorage.js"></script>
+	<script src="filters/trimText.js"></script>
+</head>
+<body data-ng-app="taskApp">
+	<h1>Task Manager</h1>
+	<hr>
+	<div data-ng-controller="taskController">
+		<h3>Search</h3>
+		Task Name : <input type="text" data-ng-model="searchTask.name">
+		<h3>Filter</h3>
+		<input type="range" min="5" max="30" data-ng-model="trimTextLength">
+		<hr>
+		<div><span>Total Task # :</span><span>{{tasks.length}}</span></div>
+		<div><span>Completed Task # :</span><span>{{getCompletedCount()}}</span></div>
+		<label for="txtTaskName">Task :</label>
+		<input type="text" name="" id="txtTaskName" data-ng-model="newTaskName">
+		<input type="button" value="Add Task" data-ng-click="addTask(newTaskName)">
+		<input type="button" value="Remove Completed" data-ng-click="removeCompleted()" data-ng-disabled="getCompletedCount() === 0">
+				<ul>
+					<li 
+						data-ng-repeat="task in tasks | filter:searchTask track by task.id" 
+						data-ng-click="toggleCompletion(task)"
+						data-ng-class="{completed : task.isCompleted, inProgress : !task.isCompleted}"
+						>{{task.name | trimText:trimTextLength}} </li>
+				</ul>		
+        <input type="button" value="Get Time" data-ng-click="getServerTime()">
+		<div>{{message}}</div>
+	</div>
+</body>
+</html>
